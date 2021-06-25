@@ -13,7 +13,17 @@ body {
 }
 
 .right-block{
-  margin-right: 10px;
+  margin: 10px 10px 10px 0;
+  height: 100px;
+  width: 100px;
+  text-align: center;
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.left-block h3{
+  margin: 0;
+  font-size: 2rem;
 }
 
 .cart-item-buttons{

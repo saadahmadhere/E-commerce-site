@@ -1,14 +1,24 @@
 import { useState } from "react";
 
 const CartItem = () => {
-    const [quantity, setQuantity] = useState(1);
+    const [itemDetails, setItemDetails] = useState({
+        title: "Phone",
+        qty: 1,
+        price: 999
+    });
 
     const addButtonHandler = () =>{
-        setQuantity(quantity+1);
+        setItemDetails(prevState => {
+            return {...prevState, qty: prevState.qty +1}
+        });
     }
 
     const removeButtonHandler = () =>{
-        setQuantity(quantity-1);
+        if(itemDetails !== 0){
+            setItemDetails(prevState => {
+                return {...prevState, qty: prevState.qty -1}
+            });
+        }
     }
 
     return (
@@ -17,9 +27,9 @@ const CartItem = () => {
                 <img className = "product-image"  alt="Product" />
             </div>
             <div className="left-block">
-                <div>Phone</div>
-                <div>Rs.999</div> 
-                <div>Qty: {quantity}</div>
+                <h3>{itemDetails.title}</h3>
+                <div style = {{color: '#777'}}>Rs.{itemDetails.price}</div> 
+                <div style = {{color: '#777'}}>Qty: {itemDetails.qty}</div>
                 <div className="cart-item-buttons">
                    <img onClick = {addButtonHandler} className = "action-icons" src="https://image.flaticon.com/icons/png/512/992/992651.png" alt="" />
                    <img onClick = {removeButtonHandler} className = "action-icons" src="https://image.flaticon.com/icons/png/512/992/992683.png" alt="minus sign" />
