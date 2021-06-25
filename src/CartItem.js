@@ -11,6 +11,7 @@ const CartItem = () => {
         setItemDetails(prevState => {
             return {...prevState, qty: prevState.qty +1}
         });
+
     }
 
     const removeButtonHandler = () =>{
