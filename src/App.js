@@ -6,16 +6,18 @@ import firebase from './firebase'
 function App() {
 
     const [products, setProducts] = useState([])
-
-   useEffect(()=>{
     const ref = firebase.firestore().collection('products');
 
-    ref.onSnapshot((snapshot) => {
+   useEffect(()=>{
+
+       ref.onSnapshot((snapshot) => { //onSnapshot is fired whenever something changes in the collection.
       const items = [];
       snapshot.forEach((doc) =>{
-        items.push(doc.data());
+        const data = doc.data();
+        items.push(data)
+        data['id'] = doc.id
+        
       })
-      console.log(items)
       setProducts(items);
 
     })
@@ -23,25 +25,35 @@ function App() {
    },[]);
 
     const handleIncreaseQuantity = (product) =>{
-          const index = products.indexOf(product)
-          products[index].qty += 1; 
-          setProducts([...products])
+          
+          ref.doc(product.id)
+          .update({
+            qty: product.qty+1
+          })
+          .then(console.log('Quantity updated successfully'))
+          .catch((error) => console.log(error))
     }
 
     const handleDecreaseQuantity = (product) =>{
-      const index = products.indexOf(product)
-
-      if(products[index].qty > 0){
-          products[index].qty -= 1; 
-          setProducts([...products])
+      
+      if(product.qty === 0){
+        return;
       }
+      ref.doc(product.id)
+      .update({
+        qty: product.qty-1
+      })
+      .then(console.log('Quantity decreased successfully'))
+      .catch((error) => console.log(error))
       
     }
 
     const handleDeleteQuantity = (product) =>{
-        const productId = product.id
-        const newProducts = products.filter((item) => (item.id !== productId))
-        setProducts([...newProducts])
+
+        firebase.firestore().collection('products')
+        .doc(product.id)
+        .delete()
+        .catch((error) => console.log(error))
     }
 
     const getCartCount = () =>{
@@ -56,16 +68,28 @@ function App() {
 
     const getCartTotal = () =>{
 
-      var count = 0;
-      products.map((product) =>(
+        var count = 0;
+        products.map((product) =>(
         count += product.qty*product.price
         ))
         return count;
     }
 
+    // const addProduct =() =>{
+    //   firebase.firestore().collection('products')
+    //   .add({
+    //     img: '',
+    //     price: 999,
+    //     title: "Washing machine",
+    //     qty: 2
+    //   })
+    //   .catch((e) => console.log(e))
+    // }
+
   return (
     <div className="App">
       <Navbar count = {getCartCount()}/>
+      {/* <button onClick = {addProduct}>Add product</button> */}
       <Cart 
           products = {products}
           onIncreaseQty = {handleIncreaseQuantity}
